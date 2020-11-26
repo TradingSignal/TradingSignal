@@ -27,6 +27,7 @@ TA-Lib = "^0.4.19"
 requests = "^2.25.0"
 fastapi = "^0.61.2"
 uvicorn = "^0.12.2"
+slackclient = "^2.9.3"
 
 [tool.poetry.dev-dependencies]
 pytest-cov = "^2.10.0"

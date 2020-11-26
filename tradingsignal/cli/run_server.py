@@ -16,7 +16,7 @@ def add_subparser(
         parents: Parent parsers, needed to ensure tree structure in argparse
     """
     run_parser = subparsers.add_parser(
-        "run_server",
+        "runserver",
         parents=parents,
         conflict_handler="resolve",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
