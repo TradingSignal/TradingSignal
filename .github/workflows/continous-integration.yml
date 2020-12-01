@@ -1,0 +1,67 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [develop, main]
+    tags:
+    - '*'
+  pull_request:
+    branches: [develop, main]
+    types: [opened, synchronize, closed]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      max-parallel: 2
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: [3.6, 3.7, 3.8]
+        poetry-version: [1.1.2]
+
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Setup poetry
+      uses: Gr1N/setup-poetry@v1
+      with:
+        poetry-version: ${{ matrix.poetry-version }}
+
+    - name: Set up Poetry cache for Python dependencies
+      uses: actions/cache@v2
+      with:
+        path: .venv
+        key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+        restore-keys: ${{ runner.os }}-poetry-${{ matrix.python-version }}
+
+    - name: Install Dependencies (MacOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        make prepare-install-macos
+        make install-full | tee .output
+        if grep 'The lock file is not up to date' .output; then exit 1; fi
+    - name: Test Code
+      env:
+        JOBS: 2
+      run: |
+        make test
+    - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          files: ./coverage1.xml,./coverage2.xml
+          directory: ./coverage/reports/
+          flags: unittests
+          env_vars: OS,PYTHON
+          name: codecov-umbrella
+          fail_ci_if_error: true
+          path_to_write_report: ./coverage/codecov_report.txt
+          verbose: true

@@ -1,4 +1,4 @@
-JOBS ?= 1
+JOBS ?= 2
 
 help:
 	@echo "make"
@@ -6,6 +6,8 @@ help:
 	@echo "        Remove Python/build artifacts."
 	@echo "    install"
 	@echo "        Install tradingsignal."
+	@echo "    install-full"
+	@echo "        Install tradingsignal with all extras."
 	@echo "    formatter"
 	@echo "        Apply black formatting to code."
 	@echo "    lint"
@@ -26,6 +28,10 @@ clean:
 install:
 	poetry run python -m pip install -U pip
 	poetry install
+
+install-full:
+	poetry run python -m pip install -U pip
+	poetry install -E full
 
 formatter:
 	poetry run black tradingsignal tests
@@ -55,8 +61,8 @@ types:
 	--disable-error-code no-redef \
 	--disable-error-code func-returns-value
 
-prepare-tests-macos:
-	brew install graphviz || true
+prepare-install-macos:
+	brew install ta-lib
 
 test: clean
-	poetry run pytest tests -n $(JOBS) --cov tradingsignal
+	poetry run pytest tests -n=$(JOBS) --cov=./ --cov-report=xml
