@@ -19,40 +19,41 @@ jobs:
         os: [ubuntu-latest, macos-latest]
         python-version: [3.6, 3.7, 3.8]
         poetry-version: [1.1.2]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-  steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Setup Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Setup poetry
+        uses: Gr1N/setup-poetry@v1
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
 
-    - name: Setup poetry
-      uses: Gr1N/setup-poetry@v1
-      with:
-        poetry-version: ${{ matrix.poetry-version }}
+      - name: Set up Poetry cache for Python dependencies
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: ${{ runner.os }}-poetry-${{ matrix.python-version }}
 
-    - name: Set up Poetry cache for Python dependencies
-      uses: actions/cache@v2
-      with:
-        path: .venv
-        key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
-        restore-keys: ${{ runner.os }}-poetry-${{ matrix.python-version }}
+      - name: Install Dependencies (MacOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          make prepare-install-macos
+          make install-full | tee .output
+          if grep 'The lock file is not up to date' .output; then exit 1; fi
 
-    - name: Install Dependencies (MacOS)
-      if: matrix.os == 'macos-latest'
-      run: |
-        make prepare-install-macos
-        make install-full | tee .output
-        if grep 'The lock file is not up to date' .output; then exit 1; fi
-    - name: Test Code
-      env:
-        JOBS: 2
-      run: |
-        make test
-    - name: Upload coverage to Codecov
+      - name: Test Code
+        env:
+          JOBS: 2
+        run: |
+          make test
+
+      - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
