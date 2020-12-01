@@ -40,6 +40,13 @@ jobs:
           key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
           restore-keys: ${{ runner.os }}-poetry-${{ matrix.python-version }}
 
+      - name: Install Dependencies (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          make prepare-install-ubuntu
+          make install-full | tee .output
+          if grep 'The lock file is not up to date' .output; then exit 1; fi
+
       - name: Install Dependencies (MacOS)
         if: matrix.os == 'macos-latest'
         run: |
