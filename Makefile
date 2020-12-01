@@ -14,8 +14,10 @@ help:
 	@echo "        Lint code with flake8, and check if black formatter should be applied."
 	@echo "    types"
 	@echo "        Check for type errors using mypy."
-	@echo "    prepare-tests-macos"
-	@echo "        Install system requirements for running tests on macOS."
+	@echo "    prepare-install-macos"
+	@echo "        Install system requirements for running on macOS."
+	@echo "    prepare-install-ubuntu"
+	@echo "        Install system requirements for running on ubuntu."
 	@echo "    test"
 	@echo "        Run pytest on tests/."
 	@echo "        Use the JOBS environment variable to configure number of workers (default: 1)."
@@ -24,6 +26,17 @@ clean:
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f  {} +
+
+prepare-install-macos:
+	brew install ta-lib
+
+prepare-install-ubuntu:
+    cd lib/
+	tar -xzf ta-lib-0.4.0-src.tar.gz
+    cd ta-lib/
+    ./configure --prefix=/usr
+    make
+    sudo make install
 
 install:
 	poetry run python -m pip install -U pip
@@ -60,9 +73,6 @@ types:
 	--disable-error-code dict-item \
 	--disable-error-code no-redef \
 	--disable-error-code func-returns-value
-
-prepare-install-macos:
-	brew install ta-lib
 
 test: clean
 	poetry run pytest tests -n=$(JOBS) --cov=./ --cov-report=xml
