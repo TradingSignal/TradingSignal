@@ -31,12 +31,13 @@ prepare-install-macos:
 	brew install ta-lib
 
 prepare-install-ubuntu:
-    cd lib/
-	tar -xzf ta-lib-0.4.0-src.tar.gz
-    cd ta-lib/
-    ./configure --prefix=/usr
-    make
-    sudo make install
+	cd lib/ \
+	&& tar -xzf ta-lib-0.4.0-src.tar.gz \
+	&& cd ta-lib \
+    && ./configure --prefix=/usr \
+    && make \
+    && which sudo && sudo make install || make install \
+    && cd ..
 
 install:
 	poetry run python -m pip install -U pip
