@@ -1,4 +1,5 @@
 # TradingSignal
+[![Maintainability](https://api.codeclimate.com/v1/badges/0390d97ff907f0836888/maintainability)](https://codeclimate.com/github/TradingSignal/TradingSignal/maintainability)
 [![Coverage Status](https://codecov.io/gh/TradingSignal/TradingSignal/branch/main/graph/badge.svg?token=GWHIOCPNE6)](https://codecov.io/gh/TradingSignal/TradingSignal)
 [![Documentation Status](https://img.shields.io/badge/docs-welcome-brightgreen.svg?style=flat-square)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/TradingSignal/TradingSignal/projects/1)
