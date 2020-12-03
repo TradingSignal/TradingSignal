@@ -40,10 +40,14 @@ jobs:
           key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
           restore-keys: ${{ runner.os }}-poetry-${{ matrix.python-version }}
 
+      - name: Install Ta-lib (Ubuntu)
+        if: (matrix.os == 'ubuntu-latest') && (steps.cache.outputs.cache-hit != 'true')
+        run: |
+          make prepare-install-ubuntu
+
       - name: Install Dependencies (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
         run: |
-          make prepare-install-ubuntu
           make install | tee .output
           if grep 'The lock file is not up to date' .output; then exit 1; fi
 
@@ -71,5 +75,4 @@ jobs:
           env_vars: OS,PYTHON
           name: codecov-umbrella
           fail_ci_if_error: true
-          path_to_write_report: ./coverage/codecov_report.txt
           verbose: true
