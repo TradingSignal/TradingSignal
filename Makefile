@@ -6,8 +6,6 @@ help:
 	@echo "        Remove Python/build artifacts."
 	@echo "    install"
 	@echo "        Install tradingsignal."
-	@echo "    install-full"
-	@echo "        Install tradingsignal with all extras."
 	@echo "    formatter"
 	@echo "        Apply black formatting to code."
 	@echo "    lint"
@@ -42,10 +40,6 @@ prepare-install-ubuntu:
 install:
 	poetry run python -m pip install -U pip
 	poetry install
-
-install-full:
-	poetry run python -m pip install -U pip
-	poetry install -E full
 
 formatter:
 	poetry run black tradingsignal tests
